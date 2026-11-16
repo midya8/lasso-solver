@@ -2,7 +2,7 @@
 import argparse
 import json
 import sys
-from . import demo, path, screen, screen_demo, branch, branch_demo
+from . import demo, path, screen, screen_demo, branch, branch_demo, optimal_face
 
 
 def load_input(filename, mode='path'):
@@ -22,12 +22,16 @@ def load_input(filename, mode='path'):
     expected = {'schema_version', 'X', 'y', 'penalties'} if mode == 'path' else {'schema_version', 'X', 'y', 'coefficients', 'penalty'}
     if mode == 'branch':
         expected = {'schema_version', 'X', 'y', 'signs'}
+    if mode == 'face':
+        expected = {'schema_version', 'X', 'y', 'penalty'}
     if not isinstance(obj, dict) or set(obj) != expected:
         raise ValueError('expected exactly ' + ', '.join(sorted(expected)))
     if type(obj['schema_version']) is not int or obj['schema_version'] != 1:
         raise ValueError('schema_version must be integer 1')
     if mode == 'branch':
         return branch(obj['X'], obj['y'], obj['signs'])
+    if mode == 'face':
+        return optimal_face(obj['X'], obj['y'], obj['penalty'])
     if mode == 'screen':
         return screen(obj['X'], obj['y'], obj['coefficients'], obj['penalty'])
     return path(obj['X'], obj['y'], obj['penalties'])
@@ -45,6 +49,8 @@ def main():
     audit.add_argument('input')
     solve = commands.add_parser('path')
     solve.add_argument('input')
+    face = commands.add_parser('face')
+    face.add_argument('input')
     args = parser.parse_args()
     try:
         if args.command == 'demo':
@@ -55,7 +61,7 @@ def main():
             result = screen_demo()
         else:
             result = load_input(args.input, args.command)
-    except (ValueError, OSError, UnicodeError, ArithmeticError) as exc:
+    except (ValueError, OSError, UnicodeError, ArithmeticError, RecursionError) as exc:
         parser.exit(2, 'sparselab: ' + str(exc) + '\n')
     print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
     return 0
