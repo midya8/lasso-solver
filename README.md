@@ -11,9 +11,10 @@ In the duplicate-column control, forward sweeps select `[1.75, 0, -0.5]`, revers
 - `fit` and `path` compute floating-point solutions and report convergence witnesses.
 - `enumerate_optima` checks small inputs with exact active/sign enumeration.
 - `screen` audits a supplied iterate and can certify some coordinates zero in every optimizer. Failure to certify is not evidence of relevance.
+- `optimal_face` enumerates the complete tiny optimizer polytope and attained coefficient ranges, including singular-design ambiguity.
 - `branch` checks the interval for one supplied sign pattern. It does not discover a complete path.
 
-The last two use rational arithmetic over the stored binary64 inputs. The
+The exact screening, face and branch calculations use rational arithmetic over the stored binary64 inputs. The
 floating solver's dual and KKT checks are not directed-rounding certificates.
 
 ## Run offline
@@ -110,3 +111,20 @@ python examples/render_branches.py --check
 62 tests retain all 45 prior checks and add 14 branch behavior checks plus 3 figure checks. Twelve seeded five-row/three-feature designs exercise all 27 supplied sign patterns, reconstruct accepted endpoint/interior KKT and zero gaps, and compare dyadic in-interval samples with the independent per-lambda enumerator. Analytic knots, all limiting ties/outside violations, transformations/N normalization, singleton/empty/singular controls, strict JSON and 128 x 12 capacity are checked. The third SVG verifies 20 table cells, both full path geometries/all 10 vertices, five knots and full exact metadata including hidden-Gram tampering. The seven-module v0.3 wheel reproduces all six complete CLI JSON outputs outside checkout; all three SVGs regenerate byte-exactly. Original solver/oracle/demos/screening outputs are unchanged.
 
 This is a one-branch verifier with standard KKT/linear algebra, not a general LARS/path-following implementation, full-path completeness guarantee, novel theorem or speed benchmark. Selected signs allow boundary zeros and are not a recovered support. Exactness concerns the stored binary64 inputs interpreted as rationals, not unknown pre-rounding data. The per-lambda oracle shares a linear-system helper; independent equation reconstruction and closed-form fixtures supplement that comparison. Established piecewise-linear path methods are credited in [BRANCHES.md](BRANCHES.md). No causal feature meaning or predictive advantage is claimed.
+
+## Complete optimizer faces
+
+`optimal_face(X, y, penalty)` and `face INPUT.json` describe every optimizer at one positive penalty as the convex hull of exact vertices. From one exact KKT seed, the routine builds the signed equicorrelation constraints and enumerates independent supports on the original rectangular design. It reports uniqueness, affine dimension, every coefficient range with attaining vertices, always-zero/nonzero coordinates and all subset outcomes. [Completeness proof, controls and stored-input limits](FACE.md).
+
+For distinct dependent columns `X=[[1,0,.5],[0,1,.5]]`, response `[1.5,1.5]` and penalty `.25`, every optimizer is `[1-t,1-t,2t]` for `0<=t<=1`. Vertices `[1,1,0]` and `[0,0,2]` have the same prediction and objective `5/8`. Each coordinate can individually vanish, but no optimizer has all coordinates zero. Marginal ranges are not a Cartesian set of valid solutions.
+
+A second control has an equicorrelated coordinate that is zero at the unique optimizer. A dual-boundary zero can remain uncertified by strict Gap Safe screening; the full face settles that separate question without weakening the screening test. Neither coefficient ambiguity nor an always-nonzero coefficient establishes feature relevance or causality.
+
+```sh
+python -m sparselab face examples/face-input.json
+python examples/verify_wheel.py
+```
+
+Twelve new tests bring the suite to 74. Exact closed forms, a complete 2,197-point dyadic grid, thirty seeded comparisons with the earlier Gram/sign oracle, all KKT/dual/endpoint equations and singular/zero/maximum-size controls check the face. The seed and comparison oracle are shared; rectangular vertex elimination, independent equation checks and closed forms supplement that dependency. The installed-wheel verifier runs every test outside checkout, checks all eight origins, matches seven complete CLI reports and regenerates all three original figures. The six earlier reports and all three SVG files remain unchanged.
+
+This applies the standard LASSO solution-polytope result, credited to [Tibshirani's uniqueness paper, section 4.2](https://arxiv.org/html/1206.0313), with exact tiny enumeration. The domain is at most 32 rows and five columns. No LARS implementation, new uniqueness theorem, statistical confidence region, scalable solver or predictive advantage is claimed.
