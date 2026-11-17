@@ -1,6 +1,6 @@
 # Lasso solver
 
-SparseLab fits small LASSO regressions and records every solver sweep. Check the primal objective, dual gap and KKT residuals, then compare with exact-rational active/sign enumeration. The Python runtime has no dependencies.
+This implementation fits small LASSO regressions and records every solver sweep. Check the primal objective, dual gap and KKT residuals, then compare with exact-rational active/sign enumeration. The Python runtime has no dependencies.
 
 In the duplicate-column control, forward sweeps select `[1.75, 0, -0.5]`, reverse sweeps select `[0, 1.75, -0.5]`, and their midpoint `[0.875, 0.875, -0.5]` is equally optimal. All have objective `5/8`, identical predictions and zero KKT residual. This is optimization geometry, not causal feature importance.
 
@@ -95,7 +95,7 @@ This is a small dense numerical reference, not a scalable sparse solver. Fits ac
 
 Floating-point dual/KKT witnesses are **not directed-rounding certificates**. Positive ridge is not silently added to remove nonuniqueness. Coefficients depend on feature units and may be nonunique. No cross-validation, held-out prediction claim, feature causality, statistical coverage, post-selection inference, logistic model or new optimization algorithm.
 
-Standard methods: Friedman, Hastie and Tibshirani, [Regularization Paths for Generalized Linear Models via Coordinate Descent](https://pmc.ncbi.nlm.nih.gov/articles/PMC2929880/), especially Section 2; Ryan Tibshirani's [Coordinate Descent notes](https://www.stat.cmu.edu/~ryantibs/convexopt/lectures/coord-desc.pdf) for soft-threshold/KKT and LASSO dual geometry. SparseLab's implementation, exact witnesses, controls and report format are original code applying those methods. MIT license.
+Standard methods: Friedman, Hastie and Tibshirani, [Regularization Paths for Generalized Linear Models via Coordinate Descent](https://pmc.ncbi.nlm.nih.gov/articles/PMC2929880/), especially Section 2; Ryan Tibshirani's [Coordinate Descent notes](https://www.stat.cmu.edu/~ryantibs/convexopt/lectures/coord-desc.pdf) for soft-threshold/KKT and LASSO dual geometry. LASSO solver's implementation, exact witnesses, controls and report format are original code applying those methods. MIT license.
 
 ## Exact affine branches
 
