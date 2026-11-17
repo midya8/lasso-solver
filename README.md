@@ -1,10 +1,13 @@
-# SparseLab
+# Lasso solver
 
 SparseLab fits small LASSO regressions and records every solver sweep. Check the primal objective, dual gap and KKT residuals, then compare with exact-rational active/sign enumeration. The Python runtime has no dependencies.
 
 In the duplicate-column control, forward sweeps select `[1.75, 0, -0.5]`, reverse sweeps select `[0, 1.75, -0.5]`, and their midpoint `[0.875, 0.875, -0.5]` is equally optimal. All have objective `5/8`, identical predictions and zero KKT residual. This is optimization geometry, not causal feature importance.
 
 ![LASSO path, duplicate-coefficient ambiguity and early-stopping audits](assets/sparsity-audit.svg)
+
+The repository is now `lasso-solver`. The Python import and CLI names stay
+`sparselab` for compatibility with existing scripts.
 
 ## Which calculation to use
 
